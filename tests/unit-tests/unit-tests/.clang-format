@@ -1,0 +1,32 @@
+BasedOnStyle: Webkit
+IndentWidth: 4
+Standard: c++14
+SortIncludes: Never
+SpaceBeforeParens: Never
+SpaceBeforeParensOptions:
+	AfterControlStatements: false
+PointerAlignment: Left
+ReferenceAlignment: Middle
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction : true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true	
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: true
+AllowShortLambdasOnASingleLine: false
+SpacesInLineCommentPrefix:
+  Minimum: 0
+AlignEscapedNewlines: DontAlign
+ColumnLimit: 0
+MaxEmptyLinesToKeep: 3
+SpaceBeforeCpp11BracedList: false
+Cpp11BracedListStyle: true
