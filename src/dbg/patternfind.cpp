@@ -62,12 +62,9 @@ bool patterntransform(const string & patterntext, vector<PatternByte> & pattern)
     if (!isValidPattern(formattext))
             return false;
 
-    int len = (int)formattext.length();
-
-    if(len % 2) //not a multiple of 2
+    if(formattext.length() % 2) //not a multiple of 2
     {
         formattext += '?';
-        len++;
     }
 
     // format text is guaranteed to be a multiple of 2 at this point, so it is safe to
