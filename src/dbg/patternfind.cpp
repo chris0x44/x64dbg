@@ -9,16 +9,6 @@ static inline bool isHex(char ch)
     return (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f');
 }
 
-static inline string formathexpattern(const string & patterntext)
-{
-    string result;
-    int len = (int)patterntext.length();
-    for(int i = 0; i < len; i++)
-        if(patterntext[i] == '?' || isHex(patterntext[i]))
-            result += patterntext[i];
-    return result;
-}
-
 static inline int hexchtoint(char ch)
 {
     if(ch >= '0' && ch <= '9')
@@ -30,16 +20,22 @@ static inline int hexchtoint(char ch)
     return -1;
 }
 
+static std::string stripspaces(std::string text)
+{
+   text.erase(std::remove(text.begin(), text.end(), ' '),text.end());
+   return text;
+}
+
 bool patterntransform(const string & patterntext, vector<PatternByte> & pattern)
 {
     pattern.clear();
-
+    string formattext = stripspaces(patterntext);
+    
     //reject patterns with unsupported charcters
     for(char ch : patterntext)
         if(ch != '?' && ch != ' ' && !isHex(ch))
             return false;
 
-    string formattext = formathexpattern(patterntext);
     int len = (int)formattext.length();
     if(!len)
         return false;
