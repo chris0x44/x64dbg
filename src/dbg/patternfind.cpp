@@ -9,6 +9,16 @@ static inline bool isHex(char ch)
     return (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f');
 }
 
+static inline bool isWildcard(char ch)
+{
+   return ch == '?';
+}
+
+static inline bool isPaternChar(char ch)
+{
+   return isHex(ch) || isWildcard(ch);
+}
+
 static inline int hexchtoint(char ch)
 {
     if(ch >= '0' && ch <= '9')
@@ -26,19 +36,23 @@ static std::string stripspaces(std::string text)
    return text;
 }
 
+static inline bool isValidPattern(const string& patterntext)
+{
+   return !patterntext.empty()
+      && std::all_of(patterntext.cbegin(), patterntext.cend(), isPaternChar)
+      && !std::all_of(patterntext.cbegin(), patterntext.cend(), isWildcard);
+}
+
 bool patterntransform(const string & patterntext, vector<PatternByte> & pattern)
 {
     pattern.clear();
     string formattext = stripspaces(patterntext);
     
-    //reject patterns with unsupported charcters
-    for(char ch : patterntext)
-        if(ch != '?' && ch != ' ' && !isHex(ch))
+    // reject invalid patterns
+    if (!isValidPattern(formattext))
             return false;
 
     int len = (int)formattext.length();
-    if(!len)
-        return false;
 
     if(len % 2) //not a multiple of 2
     {
@@ -49,7 +63,7 @@ bool patterntransform(const string & patterntext, vector<PatternByte> & pattern)
     PatternByte newByte;
     for(int i = 0, j = 0; i < len; i++)
     {
-        if(formattext[i] == '?') //wildcard
+        if(isWildcard(formattext[i]))
         {
             newByte.nibble[j].wildcard = true; //match anything
         }
@@ -66,14 +80,6 @@ bool patterntransform(const string & patterntext, vector<PatternByte> & pattern)
             pattern.push_back(newByte);
         }
     }
-
-    //reject wildcard only patterns
-    bool allWildcard = std::all_of(pattern.begin(), pattern.end(), [](const PatternByte & patternByte)
-    {
-        return patternByte.nibble[0].wildcard & patternByte.nibble[1].wildcard;
-    });
-    if(allWildcard)
-        return false;
 
     return true;
 }
