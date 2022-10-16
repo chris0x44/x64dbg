@@ -19,7 +19,7 @@ static inline bool isPaternChar(char ch)
    return isHex(ch) || isWildcard(ch);
 }
 
-static inline int hexchtoint(char ch)
+static inline unsigned char hexchtoint(char ch)
 {
     if(ch >= '0' && ch <= '9')
         return ch - '0';
@@ -43,6 +43,16 @@ static inline bool isValidPattern(const string& patterntext)
       && !std::all_of(patterntext.cbegin(), patterntext.cend(), isWildcard);
 }
 
+static PatternByte::PatternNibble createPatternNibble(char nibbleChar)
+{
+   return {hexchtoint(nibbleChar), isWildcard(nibbleChar)};
+}
+
+static PatternByte createPatternByte(char uppperNibble, char lowerNibble)
+{
+   return {createPatternNibble(uppperNibble), createPatternNibble(lowerNibble)};
+}
+
 bool patterntransform(const string & patterntext, vector<PatternByte> & pattern)
 {
     pattern.clear();
@@ -60,25 +70,13 @@ bool patterntransform(const string & patterntext, vector<PatternByte> & pattern)
         len++;
     }
 
-    PatternByte newByte;
-    for(int i = 0, j = 0; i < len; i++)
+    // format text is guaranteed to be a multiple of 2 at this point, so it is safe to
+    // process two bytes at a time with each iteration
+    size_t i = 0;
+    while(i < formattext.size())
     {
-        if(isWildcard(formattext[i]))
-        {
-            newByte.nibble[j].wildcard = true; //match anything
-        }
-        else //hex
-        {
-            newByte.nibble[j].wildcard = false;
-            newByte.nibble[j].data = hexchtoint(formattext[i]) & 0xF;
-        }
-
-        j++;
-        if(j == 2) //two nibbles = one byte
-        {
-            j = 0;
-            pattern.push_back(newByte);
-        }
+       pattern.push_back(createPatternByte(formattext[i], formattext[i + 1]));
+       i += 2;
     }
 
     return true;
