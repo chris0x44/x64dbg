@@ -8,8 +8,8 @@ struct PatternByte
 {
     struct PatternNibble
     {
-        unsigned char data;
-        bool wildcard;
+        unsigned char data = 0;
+        bool wildcard = false;
     } nibble[2];
 };
 
